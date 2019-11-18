@@ -54,6 +54,7 @@
             <h2>
                 Jsem Vánoční Discord bot, který přehrává Vánoční písničky.<br>
                 <a href="https://discordapp.com/oauth2/authorize?client_id=642795374150418438&scope=bot" style="text-decoration: none;" ><span style="color: #32d8ff">Přidej si mě k sobě!</span></a><br>
+                <a href="https://github.com/Veldik/jezisek" style="text-decoration: none;" ><span style="color: #ff4a50">Můj zdrojový kód!</span></a><br>
             </h2>
         </div>
     <body>
