@@ -167,7 +167,7 @@ client.on('message', msg => {
           const embed = new Discord.RichEmbed()
           .setAuthor("Ježíšek")
           .setColor(3447003)
-          .setDescription("Písnička **" + songs.songs[id].id + "** začala úspěšně hrát.")
+          .setDescription("Písnička **" + songs.songs[id].name + "** začala úspěšně hrát.")
           .setFooter("Ježíšek")
           .setTimestamp()
           msg.channel.send({embed})
