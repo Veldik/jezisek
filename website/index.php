@@ -1,6 +1,8 @@
+<?php
+//cenim
+?>
 <html>
     <head>
-
         <title>Ježíšek</title>
         <meta name="theme-color" content="#000000">
         <meta name="description" content="Jsem Vánoční Discord bot, který přehrává Vánoční písničky.">
