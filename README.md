@@ -6,3 +6,4 @@ Jsem Vánoční Discord bot, který přehrává Vánoční písničky.
 * [Web](https://jezisek.velda.xyz/)
 ## Main Contributors:
 * [Velda](https://github.com/Veldik/)
+* [Michal Dobeš](https://dobes.pw)
