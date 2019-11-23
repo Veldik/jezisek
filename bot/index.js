@@ -67,11 +67,10 @@ client.on('message', msg => {
     msg.channel.send({embed})
   }
   //list command
-  if (command === 'list'){
+  if (command === 'list' || command === 'l'){
     var list = "**List písniček**: \n";
     for(i=0; i < songcount; i++){
       list += "["+ i +"] **" + songs.songs[i].name + "** \n"
-
     }
     msg.channel.send(list)
   }
@@ -99,7 +98,7 @@ client.on('message', msg => {
     msg.channel.send({embed})
   }
   //help command
-  if (command === 'help'){
+  if (command === 'help' || command === 'h'){
     const embed = new Discord.RichEmbed()
     .setAuthor("Ježíšek")
     .setTitle("Nápověda")
@@ -151,12 +150,12 @@ client.on('message', msg => {
           .setFooter("Ježíšek")
           .setTimestamp()
           msg.channel.send({embed})
-        } else if (id <= songcount){
+        } else if (id < songcount){
           // pouštění songu
           msg.member.voiceChannel.join()
           .then(connection => {
               console.log('poustim songu');
-              connection.playStream(YTDL('https://www.youtube.com/watch?v=' + songs.songs[0].id))
+              connection.playStream(YTDL('https://www.youtube.com/watch?v=' + songs.songs[id].id))
               .on('end', () => {
                   console.log('leavuju');
                   connection.channel.leave();
