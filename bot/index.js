@@ -1,10 +1,20 @@
+// DISCORD BOT JEŽÍŠEK
+// GITHUB.COM/VELDIK
+
+// nodejs modules
 const Discord = require('discord.js');
-const client = new Discord.Client();
+const fs = require('fs');
 const YTDL = require('ytdl-core');
+
+const client = new Discord.Client();
+//json import
 const botconfig = require("./botconfig.json");
 const songs = require("./songs.json");
-var prefix = botconfig.prefix;
+//variables
+const token = botconfig.token;
+const prefix = botconfig.prefix;
 var songcount = Object.keys(songs.songs).length
+//functions
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
@@ -67,8 +77,8 @@ client.on('message', msg => {
     msg.channel.send({embed})
   }
   //list command
-  if (command === 'list' || command === 'l'){
-    var list = "**List písniček**: \n";
+  if (command === 'list' || command === 'l' || command === 'seznam'){
+    var list = "**Seznam písniček**: \n";
     for(i=0; i < songcount; i++){
       list += "["+ i +"] **" + songs.songs[i].name + "** \n"
     }
@@ -134,10 +144,10 @@ client.on('message', msg => {
           id = getRandomInt(songcount);
           msg.member.voiceChannel.join()
           .then(connection => {
-              console.log('poustim songu');
+              console.log('Pouštím písničku: '+ songs.songs[id].name +' s id: ' + id + ' na serveru:'+ msg.guild.name);
               connection.playStream(YTDL('https://www.youtube.com/watch?v=' + songs.songs[id].id))
               .on('end', () => {
-                  console.log('leavuju');
+                  console.log('Opouštím kanál na serveru:' + msg.guild.name);
                   connection.channel.leave();
               })
               .catch(console.error);
@@ -154,10 +164,10 @@ client.on('message', msg => {
           // pouštění songu
           msg.member.voiceChannel.join()
           .then(connection => {
-              console.log('poustim songu');
+              console.log('Pouštím písničku: '+ songs.songs[id].name +' s id: ' + id + ' na serveru:'+ msg.guild.name);
               connection.playStream(YTDL('https://www.youtube.com/watch?v=' + songs.songs[id].id))
               .on('end', () => {
-                  console.log('leavuju');
+                  console.log('Opouštím kanál na serveru:' + msg.guild.name);
                   connection.channel.leave();
               })
               .catch(console.error);
@@ -194,4 +204,4 @@ client.on('message', msg => {
   };
 });
 
-client.login(botconfig.token);
+client.login(token);
