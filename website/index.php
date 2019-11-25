@@ -3,86 +3,13 @@
 ?>
 <html>
     <head>
-
         <title>Ježíšek</title>
         <meta name="theme-color" content="#000000">
         <meta name="description" content="Jsem Vánoční Discord bot, který přehrává Vánoční písničky.">
         <meta property="og:image" content="images/logo.png">
+        <link rel="stylesheet" type="text/css" href="assets/css/main.css">
         <link rel="shortcut icon" href="images/logo.png" type="image/x-icon">
         <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
-        <style>
-            html{
-                width: 100%;
-                height: 100%;
-            }
-            body{
-                background-color: #3f0d12;
-                background-image: linear-gradient(315deg, #3f0d12 0%, #a71d31 74%);
-                color: #ffffff;
-                font-family: sans-serif;
-                margin: 0;
-                padding: 0;
-                width: 100%;
-                height: 100%;
-                font-family: 'Lato', sans-serif;
-            }
-            div{
-                position: absolute;
-                transform: translate(-50%, -50%);
-                left: 50%;
-                top: 50%;
-            }
-            h1{
-                color: #ffffff;
-                font-size: 120px;
-                text-align: center;
-                letter-spacing: -5px;
-            }
-            p{
-                color: #242424;
-                text-align: center;
-            }
-            h2{
-                display: block;
-                color: #ffffff;
-                text-align: center;
-                text-transform: uppercase;
-                padding-top: -70px;
-            }
-            .url{
-                transition: color 0.5s ease;
-                color: #1089ff;
-                -webkit-mask-image: linear-gradient(-75deg, rgba(0,0,0,.6) 30%, #000 50%, rgba(0,0,0,.6) 70%);
-                -webkit-mask-size: 200%;
-                animation: shine 2s infinite;
-                font-weight: 500;
-            }
-            .url:hover{
-                color: white;
-                font-weight: 500;
-            }
-            @-webkit-keyframes shine {
-                from {
-                    -webkit-mask-position: 150%;
-                }
-                
-                to {
-                    -webkit-mask-position: -50%;
-                }
-            }
-            .no-decoration{
-                text-decoration: none;
-            }
-            .bull{
-                color: #23374d;
-            }
-            h1{
-                font-weight: 900;
-            }
-            span{
-                font-weight: 300;
-            }
-        </style>
     <head>
     <body id="particles">
         <div>
