@@ -192,7 +192,7 @@ async function execute(message, guildQueue){
 			queueContruct.connection = connection;
 
 			play(message.guild, queueContruct.songs[0]);
-      console.log("Pouštím písničku na serveru: "+message.guild.name);
+      console.log("Připojil jsem se do hlasového kanálu na serveru : " + message.guild.name);
       const embed = new Discord.RichEmbed()
         .setAuthor("Ježíšek")
         .setColor(3447003)
@@ -262,14 +262,13 @@ function play(guild, song) {
       setTimeout(function() {
         guildQueue.textChannel.send({embed});
       }, 250);
-      console.log("Opouštím server: "+guild.name);
+      console.log("Opouštím hlasový kanál na serveru: " + guild.name);
 		queue.delete(guild.id);
 		return;
 	}
 
 	const dispatcher = guildQueue.connection.playStream(ytdl(song.url))
 		.on('end', () => {
-			console.log('Song dohrál!');
 			guildQueue.songs.shift();
 			play(guild, guildQueue.songs[0]);
 		})
