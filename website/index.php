@@ -6,9 +6,9 @@
         <title>Ježíšek</title>
         <meta name="theme-color" content="#000000">
         <meta name="description" content="Jsem Vánoční Discord bot, který přehrává Vánoční písničky.">
-        <meta property="og:image" content="images/logo.png">
+        <meta property="og:image" content="./assets/images/logo.png">
         <link rel="stylesheet" type="text/css" href="assets/css/main.css">
-        <link rel="shortcut icon" href="images/logo.png" type="image/x-icon">
+        <link rel="shortcut icon" href="assets/images/logo.png" type="image/x-icon">
         <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
     <head>
     <body id="particles">
