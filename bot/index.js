@@ -4,7 +4,7 @@
 // nodejs modules
 const Discord = require('discord.js');
 const fs = require('fs');
-const YTDL = require('ytdl-core');
+const ytdl = require('ytdl-core');
 
 const client = new Discord.Client();
 //json import
@@ -14,6 +14,7 @@ const songs = require("./songs.json");
 const token = botconfig.token;
 const prefix = botconfig.prefix;
 var songcount = Object.keys(songs.songs).length
+const queue = new Map();
 //functions
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
@@ -25,19 +26,20 @@ client.on("ready", () => {
 });
 
 client.on("guildCreate", guild => {
-  console.log(`Připojil jsem se na: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
+  console.log(`Připojil jsem se na: ${guild.name} (id: ${guild.id}). Tato guilda má ${guild.memberCount} členů!`);
 });
 
 client.on("guildDelete", guild => {
   console.log(`Byl jsem vyhozen z: ${guild.name} (id: ${guild.id})`);
 });
 
-client.on('message', msg => {
-  if(msg.author.bot) return;
-  if(msg.channel instanceof Discord.DMChannel) return;
-  if(msg.content.indexOf(botconfig.prefix) !== 0) return;
-  const args = msg.content.slice(botconfig.prefix.length).trim().split(/ +/g);
+client.on('message', message => {
+  if(message.author.bot) return;
+  if(message.channel instanceof Discord.DMChannel) return;
+  if(message.content.indexOf(botconfig.prefix) !== 0) return;
+  const args = message.content.slice(botconfig.prefix.length).trim().split(/ +/g);
   const command = args.shift().toLowerCase();
+  const guildQueue = queue.get(message.guild.id);
   //ping command
   if (command === 'ping') {
     const embed = new Discord.RichEmbed()
@@ -47,15 +49,15 @@ client.on('message', msg => {
     .setDescription("Ping? hmmm ne, Pong!")
     .setFooter("Ježíšek")
     .setTimestamp()
-    msg.channel.send({embed})
+    message.channel.send({embed})
   }
   //say command
-  if (command === 'say' && msg.author.id == '187583136710918144'){
-  const sayMessage = args.join(" ");
-  msg.delete().catch(O_o=>{});
-  msg.channel.send(sayMessage);
+  if (command === 'say' && message.author.id == '187583136710918144'){
+  const saymessage = args.join(" ");
+  message.delete().catch(O_o=>{});
+  message.channel.send(saymessage);
   }
-  if (command === 'say' && msg.author.id != '187583136710918144'){
+  if (command === 'say' && message.author.id != '187583136710918144'){
     const embed = new Discord.RichEmbed()
     .setTitle("Chyba")
     .setAuthor("Ježíšek")
@@ -63,18 +65,7 @@ client.on('message', msg => {
     .setDescription("Tento příkaz může používat pouze Velda.")
     .setFooter("Ježíšek")
     .setTimestamp()
-    msg.channel.send({embed})
-  }
-  //play 24/7 command
-  if (command === 'p24/7' || command === 'play24/7'){
-    const embed = new Discord.RichEmbed()
-    .setTitle("Chyba")
-    .setAuthor("Ježíšek")
-    .setColor(15158332)
-    .setDescription("Tento příkaz zatím nefunguje, ale intenzivně se na něm pracuje.")
-    .setFooter("Ježíšek")
-    .setTimestamp()
-    msg.channel.send({embed})
+    message.channel.send({embed})
   }
   //list command
   if (command === 'list' || command === 'l' || command === 'seznam'){
@@ -82,7 +73,7 @@ client.on('message', msg => {
     for(i=0; i < songcount; i++){
       list += "["+ i +"] **" + songs.songs[i].name + "** \n"
     }
-    msg.channel.send(list)
+    message.channel.send(list)
   }
   //about command
   if (command === 'about' || command === 'info'){
@@ -94,7 +85,7 @@ client.on('message', msg => {
     .setThumbnail('https://cdn.discordapp.com/avatars/642795374150418438/82dde4117608945bbbfa0c24bd1adb9c.png?size=1280')
     .setFooter("Ježíšek")
     .setTimestamp()
-    msg.channel.send({embed})
+    message.channel.send({embed})
   }
   //invite command
   if (command === 'invite' || command ==='inv'){
@@ -105,103 +96,187 @@ client.on('message', msg => {
     .setDescription("Pozvi si Ježiška i na svůj Discord server! **[INVITE LINK](https://discordapp.com/oauth2/authorize?client_id=642795374150418438&scope=bot)**")
     .setFooter("Ježíšek")
     .setTimestamp()
-    msg.channel.send({embed})
+    message.channel.send({embed})
   }
   //help command
   if (command === 'help' || command === 'h'){
     const embed = new Discord.RichEmbed()
-    .setAuthor("Ježíšek")
-    .setTitle("Nápověda")
-    .setColor(3447003)
-    .setDescription("Zde nalezneš všechny příkazy, které dokážu.")
-    .addField("**j!play**", "Náhodně pustí písničku ze seznamu.", "false")
-    .addField("**j!play 3**", "Pustí písničku podle ID ze seznamu.", "false")
-    .addField("**j!play24/7**", "Budu hrát Vánoční songy nekonečně dlouho. (zatím nefunguje)", "false")
-    .addField("**j!list**", "Zobrazí seznam písniček.", "false")
-    .addField("**j!ping**", "Zahrajeme si ping-pong?", "false")
-    .addField("**j!about**", "Základní informace o mně.", "false")
-    .addField("**j!invite**", "Odkaz, aby sis mě mohl pozvat i na tvůj Discord server.", "false")
-    .setFooter("Ježíšek")
-    .setTimestamp()
-    msg.channel.send({embed})
-  }
-  //play command
-  if (command === 'play' || command === 'p') {
-    if (msg.member.voiceChannel){
-      if (msg.guild.voiceConnection){
-        const embed = new Discord.RichEmbed()
-        .setTitle("Chyba")
         .setAuthor("Ježíšek")
-        .setColor(15158332)
-        .setDescription("Již hraji, musíš počkat než dohraji!")
+        .setTitle("Nápověda")
+        .setColor(3447003)
+        .setDescription("Zde nalezneš všechny příkazy, které dokážu.")
+        .addField("**j!play**", "Náhodně pustí písničku ze seznamu.", "false")
+        .addField("**j!play 3**", "Pustí písničku podle ID ze seznamu.", "false")
+        .addField("**j!play24/7**", "Budu hrát Vánoční songy nekonečně dlouho. (zatím nefunguje)", "false")
+        .addField("**j!list**", "Zobrazí seznam písniček.", "false")
+        .addField("**j!ping**", "Zahrajeme si ping-pong?", "false")
+        .addField("**j!about**", "Základní informace o mně.", "false")
+        .addField("**j!invite**", "Odkaz, aby sis mě mohl pozvat i na tvůj Discord server.", "false")
         .setFooter("Ježíšek")
         .setTimestamp()
-        msg.channel.send({embed})
-      } else {
-        let id = args.slice(0).join(' ');
-        if (!id){
-          //pouštění songu
-          id = getRandomInt(songcount);
-          msg.member.voiceChannel.join()
-          .then(connection => {
-              console.log('Pouštím písničku: '+ songs.songs[id].name +' s id: ' + id + ' na serveru:'+ msg.guild.name);
-              connection.playStream(YTDL('https://www.youtube.com/watch?v=' + songs.songs[id].id))
-              .on('end', () => {
-                  console.log('Opouštím kanál na serveru:' + msg.guild.name);
-                  connection.channel.leave();
-              })
-              .catch(console.error);
-          })
-          .catch(console.error);
-          const embed = new Discord.RichEmbed()
-          .setAuthor("Ježíšek")
-          .setColor(3447003)
-          .setDescription("Náhodně jsem ti vybral písničku: **" + songs.songs[id].name + "**")
-          .setFooter("Ježíšek")
-          .setTimestamp()
-          msg.channel.send({embed})
-        } else if (id < songcount){
-          // pouštění songu
-          msg.member.voiceChannel.join()
-          .then(connection => {
-              console.log('Pouštím písničku: '+ songs.songs[id].name +' s id: ' + id + ' na serveru:'+ msg.guild.name);
-              connection.playStream(YTDL('https://www.youtube.com/watch?v=' + songs.songs[id].id))
-              .on('end', () => {
-                  console.log('Opouštím kanál na serveru:' + msg.guild.name);
-                  connection.channel.leave();
-              })
-              .catch(console.error);
-          })
-          .catch(console.error);
-          const embed = new Discord.RichEmbed()
-          .setAuthor("Ježíšek")
-          .setColor(3447003)
-          .setDescription("Písnička **" + songs.songs[id].name + "** začala úspěšně hrát.")
-          .setFooter("Ježíšek")
-          .setTimestamp()
-          msg.channel.send({embed})
-        } else {
-          const embed = new Discord.RichEmbed()
-          .setTitle("Chyba")
-          .setAuthor("Ježíšek")
-          .setColor(15158332)
-          .setDescription("Nesprávné použití příkazu, napiš **j!play** pro spuštění náhodné písničky nebo **j!play 4** pro spuštění písničky podle ID!")
-          .setFooter("Ježíšek")
-          .setTimestamp()
-          msg.channel.send({embed})
-        }
-      }
-    } else {
-      const embed = new Discord.RichEmbed()
+    message.channel.send({embed})
+  }
+  if (command === 'play' || command === 'p'){
+    execute(message, guildQueue);
+    return;
+  }
+  if (command === 'skip' || command === 's'){
+    skip(message, guildQueue)
+    return;
+  }
+});
+
+async function execute(message, guildQueue){
+  const args = message.content.split(' ');
+
+	const voiceChannel = message.member.voiceChannel;
+	if (!voiceChannel) {
+    const embed = new Discord.RichEmbed()
       .setTitle("Chyba")
       .setAuthor("Ježíšek")
       .setColor(15158332)
       .setDescription("Musíš být připojen v kanále pro mluvení, abys mohl pustit písničku!")
       .setFooter("Ježíšek")
       .setTimestamp()
-      msg.channel.send({embed})
-    }
-  };
-});
+      return message.channel.send({embed})
+  }
+	const permissions = voiceChannel.permissionsFor(message.client.user);
+	if (!permissions.has('CONNECT') || !permissions.has('SPEAK')) {
+    const embed = new Discord.RichEmbed()
+      .setTitle("Chyba")
+      .setAuthor("Ježíšek")
+      .setColor(15158332)
+      .setDescription("Nemám práva na připojení nebo hraní v kanále, kde se právě nacházíš.")
+      .setFooter("Ježíšek")
+      .setTimestamp()
+      return message.channel.send({embed})
+	}
+
+  let id = args[1];
+  if (!id){
+    id = getRandomInt(songcount);
+  } else if (id < songcount){
+    id = args[1];
+  } else {
+      const embed = new Discord.RichEmbed()
+          .setTitle("Chyba")
+          .setAuthor("Ježíšek")
+          .setColor(15158332)
+          .setDescription("Nesprávné použití příkazu, napiš **j!play** pro spuštění náhodné písničky nebo **j!play 4** pro spuštění písničky podle ID!")
+          .setFooter("Ježíšek")
+          .setTimestamp()
+      return message.channel.send({embed})
+  }
+
+	const song = {
+		title: songs.songs[id].name,
+		url: "https://www.youtube.com/watch?v=" + songs.songs[id].id,
+	};
+
+	if (!guildQueue) {
+		const queueContruct = {
+			textChannel: message.channel,
+			voiceChannel: voiceChannel,
+			connection: null,
+			songs: [],
+			volume: 5,
+			playing: true,
+		};
+
+		queue.set(message.guild.id, queueContruct);
+
+		queueContruct.songs.push(song);
+
+		try {
+			var connection = await voiceChannel.join();
+			queueContruct.connection = connection;
+
+			play(message.guild, queueContruct.songs[0]);
+      console.log("Pouštím písničku na serveru: "+message.guild.name);
+      const embed = new Discord.RichEmbed()
+        .setAuthor("Ježíšek")
+        .setColor(3447003)
+        .setDescription("Písnička: **" + songs.songs[id].name + "** úspěšně začala hrát.")
+        .setFooter("Ježíšek")
+        .setTimestamp()
+      return message.channel.send({embed})
+		} catch (err) {
+			console.log(err);
+			queue.delete(message.guild.id);
+			return message.channel.send(err);
+		}
+	} else {
+		guildQueue.songs.push(song);
+    const embed = new Discord.RichEmbed()
+      .setAuthor("Ježíšek")
+      .setColor(3447003)
+      .setDescription("Písnička: **" + songs.songs[id].name + "** byla úspěsně přidána do seznamu.")
+      .setFooter("Ježíšek")
+      .setTimestamp()
+    return message.channel.send({embed})
+	}
+}
+
+function skip(message, guildQueue) {
+	if (!message.member.voiceChannel) {
+    const embed = new Discord.RichEmbed()
+        .setTitle("Chyba")
+        .setAuthor("Ježíšek")
+        .setColor(15158332)
+        .setDescription("Musíš být v kanále pro mluvení, abys mohl pustit písničku.")
+        .setFooter("Ježíšek")
+        .setTimestamp()
+    return message.channel.send({embed})
+  }
+	if (!guildQueue) {
+    const embed = new Discord.RichEmbed()
+        .setTitle("Chyba")
+        .setAuthor("Ježíšek")
+        .setColor(15158332)
+        .setDescription("Nehraje žádná písnička, kterou bys mohl přeskočit.")
+        .setFooter("Ježíšek")
+        .setTimestamp()
+    return message.channel.send({embed})
+  }
+	guildQueue.connection.dispatcher.end();
+  const embed = new Discord.RichEmbed()
+    .setAuthor("Ježíšek")
+    .setColor(3447003)
+    .setDescription("Písnička byla přeskočena.")
+    .setFooter("Ježíšek")
+    .setTimestamp()
+  message.channel.send({embed});
+}
+
+function play(guild, song) {
+	const guildQueue = queue.get(guild.id);
+
+	if (!song) {
+		guildQueue.voiceChannel.leave();
+    const embed = new Discord.RichEmbed()
+      .setAuthor("Ježíšek")
+      .setColor(3447003)
+      .setDescription("Dohrál jsem všechny písničky ze seznamu. \n Opouštím kanál.")
+      .setFooter("Ježíšek")
+      .setTimestamp()
+      setTimeout(function() {
+        guildQueue.textChannel.send({embed});
+      }, 250);
+      console.log("Opouštím server: "+guild.name);
+		queue.delete(guild.id);
+		return;
+	}
+
+	const dispatcher = guildQueue.connection.playStream(ytdl(song.url))
+		.on('end', () => {
+			console.log('Song dohrál!');
+			guildQueue.songs.shift();
+			play(guild, guildQueue.songs[0]);
+		})
+		.on('error', error => {
+			console.error(error);
+		});
+	dispatcher.setVolumeLogarithmic(guildQueue.volume / 5);
+}
 
 client.login(token);
