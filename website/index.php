@@ -16,9 +16,9 @@
             <h1>Ježíšek</h1>
             <h2>
                 <span>Jsem Vánoční Discord bot, který přehrává Vánoční písničky.</span><br>
-                <a href="https://discordapp.com/oauth2/authorize?client_id=642795374150418438&scope=bot" class="no-decoration"><span class="url">Přidej si mě k sobě!</span></a>
+                <a target="_blank" href="https://discordapp.com/oauth2/authorize?client_id=642795374150418438&scope=bot" class="no-decoration"><span class="url">Přidej si mě k sobě!</span></a>
                 <span class="bull">&bull;</span>
-                <a href="https://github.com/Veldik/jezisek" class="no-decoration"><span class="url">Můj zdrojový kód!</span></a><br>
+                <a target="_blank" href="https://github.com/Veldik/jezisek" class="no-decoration"><span class="url">Můj zdrojový kód!</span></a><br>
             </h2>
         </div>
     <body>
