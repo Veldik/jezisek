@@ -1,4 +1,4 @@
-![Logo Ježíška](https://jezisek.velda.xyz/assets/images/logo.png)
+![Logo Ježíška](./docs/assets/images/logo.png)
 ## O mně
 Jsem Vánoční Discord bot, který přehrává Vánoční písničky. Cením, že si tady došel.
 ## Odkazy:
